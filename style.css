@@ -10,7 +10,7 @@
     gap: 25px;
 }
 
-.container .gameboard #spot {
+.container .gameboard .spot {
     width: 200px;
     height: 200px;
     background-color: aqua;
