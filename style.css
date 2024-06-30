@@ -3,3 +3,15 @@
     margin: 0;
     padding: 0;
 }
+
+.container .gameboard {
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 200px);
+    gap: 25px;
+}
+
+.container .gameboard #spot {
+    width: 200px;
+    height: 200px;
+    background-color: aqua;
+}
