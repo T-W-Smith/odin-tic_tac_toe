@@ -10,6 +10,8 @@
         <div class="container">
             <header class="header">
                 <h1>Tic Tac Toe</h1>
+                <h3 id="players"></h3>
+                <h3 id="turn"></h3>
             </header>
             <main class="gameboard" >
                 <div class="spot"></div>
@@ -22,6 +24,24 @@
                 <div class="spot"></div>
                 <div class="spot"></div>
             </main>
+        </div>
+        <div class="modal">
+            <dialog id="dialog">
+                <form id="form" method="dialog">
+                    <h3>Please enter your names: </h3>
+                    <div id="textbox">
+                        <label for="playerOne">Player X:</label>
+                        <input type="text" id="playerOne" name="playerOne" required>
+                    </div>
+                    <div id="textbox">
+                        <label for="playerTwo">Player O:</label>
+                        <input type="text" id="playerTwo" name="playerTwo" required>
+                    </div>
+                    <div id="submit">
+                        <input type="submit" id="submit" value="Start Game!">
+                    </div>
+                </form>
+            </dialog>
         </div>
     </body>
 <script src="script.js"></script>

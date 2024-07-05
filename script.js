@@ -20,9 +20,20 @@ const gameboard = (function() {
 
 //Game Object
 const game = (function() {
-    //Creates both players
-    const playerOne = createPlayer("Player X", "X");
-    const playerTwo = createPlayer("Player O", "O");
+    let pOne = document.getElementById("playerOne");
+    let pTwo = document.getElementById("playerTwo");
+    document.getElementById('dialog').showModal();
+    document.querySelector('#form').addEventListener("submit", function(e) {
+        e.preventDefault();
+        const playerOne = createPlayer(pOne.value, "X");
+        const playerTwo = createPlayer(pTwo.value, "O");
+        player.setPlayers(playerOne.name, playerTwo.name);
+        document.getElementById("players").innerHTML = playerOne.name + " VS " + playerTwo.name;
+        document.getElementById("turn").innerHTML = playerOne.name + "'s turn!"
+        pOne.value = "";
+        pTwo.value = "";
+        dialog.close();
+    })
     //Handles player turns
     let tick = 0;
     const getTick = () => tick;
@@ -35,6 +46,18 @@ const game = (function() {
 function createPlayer(name, marker) {
     return {name, marker};
 }
+
+const player = (function() {
+    let pOneName = "";
+    let pTwoName = "";
+    const setPlayers = (pOne, pTwo) => {
+        pOneName = pOne;
+        pTwoName = pTwo;
+    }
+    const getPOne = () => pOneName;
+    const getPTwo = () => pTwoName;
+    return {getPOne, getPTwo, setPlayers};
+})();
 
 const checkWinner = (function() {
     const winningCondition = [
@@ -54,14 +77,14 @@ const checkWinner = (function() {
     function validateWinner() {
         for (let i = 0; i <= 7; i++) {
             const condition = winningCondition[i];
-            let one = gameboard.getBoard()[condition[0]];
-            let two = gameboard.getBoard()[condition[1]];
-            let three = gameboard.getBoard()[condition[2]];
-            if (one === '' || two === '' || three === '') {
+            let zero = gameboard.getBoard()[condition[0]];
+            let one = gameboard.getBoard()[condition[1]];
+            let two = gameboard.getBoard()[condition[2]];
+            if (zero === '' || one === '' || two === '') {
                 continue;
             }
 
-            if (one === two && two === three) {
+            if (zero === one && one === two) {
                 winner = true;
                 break
             }
@@ -80,11 +103,13 @@ document.querySelectorAll(".spot").forEach((spot) => {
         if (!checkWinner.getWinner()) {
                 let temp = game.getTick();
                 if (temp %= 2){
+                    document.getElementById("turn").innerHTML = player.getPOne() + "'s turn!";
                     gameboard.setBoard(spot.getAttribute("id"), "O");
                     spot.innerHTML = "O";
                     game.increaseTick();
                 }
                 else {
+                    document.getElementById("turn").innerHTML = player.getPTwo() + "'s turn!";
                     gameboard.setBoard(spot.getAttribute("id"), "X");
                     spot.innerHTML = "X";
                     game.increaseTick();
