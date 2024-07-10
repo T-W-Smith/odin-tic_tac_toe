@@ -73,6 +73,11 @@ const checkWinner = (function() {
 
     let winner = false;
     const getWinner = () => winner;
+
+    let winnerName = "";
+    const setWinner = (w) => {
+        winnerName = w;
+    }
     
     function validateWinner() {
         for (let i = 0; i <= 7; i++) {
@@ -86,11 +91,12 @@ const checkWinner = (function() {
 
             if (zero === one && one === two) {
                 winner = true;
+                document.getElementById("turn").innerHTML = winnerName + " is the Winner!";
                 break
             }
         }
     }
-    return {validateWinner, getWinner};
+    return {validateWinner, getWinner, setWinner};
 })();
 
 //Handles input
@@ -101,20 +107,22 @@ document.querySelectorAll(".spot").forEach((spot) => {
 
     function clickSpot() {
         if (!checkWinner.getWinner()) {
-                let temp = game.getTick();
-                if (temp %= 2){
-                    document.getElementById("turn").innerHTML = player.getPOne() + "'s turn!";
-                    gameboard.setBoard(spot.getAttribute("id"), "O");
-                    spot.innerHTML = "O";
-                    game.increaseTick();
-                }
-                else {
-                    document.getElementById("turn").innerHTML = player.getPTwo() + "'s turn!";
-                    gameboard.setBoard(spot.getAttribute("id"), "X");
-                    spot.innerHTML = "X";
-                    game.increaseTick();
-                }
+            let temp = game.getTick();
+            if (temp %= 2){
+                document.getElementById("turn").innerHTML = player.getPOne() + "'s turn!";
+                gameboard.setBoard(spot.getAttribute("id"), "O");
+                spot.innerHTML = "O";
+                game.increaseTick();
+                checkWinner.setWinner(player.getPTwo());
             }
+            else {
+                document.getElementById("turn").innerHTML = player.getPTwo() + "'s turn!";
+                gameboard.setBoard(spot.getAttribute("id"), "X");
+                spot.innerHTML = "X";
+                game.increaseTick();
+                checkWinner.setWinner(player.getPOne());
+            }
+        }
 
         checkWinner.validateWinner();
     }
