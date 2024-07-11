@@ -19,7 +19,7 @@ const gameboard = (function() {
     const getIndex = () => index;
     const increaseIndex = () => index++;
     const resetIndex = () => index = 0;
-    return {board, getIndex, increaseIndex, resetIndex, setBoard, getBoard};
+    return {getIndex, increaseIndex, resetIndex, setBoard, getBoard};
 
 })();
 
@@ -79,8 +79,16 @@ const checkWinner = (function() {
             if (zero === one && one === two) {
                 winner = true;
                 displayController.displayWinner(winnerName);
+                break;
+            }
 
-                break
+            function checkTie(tie) {
+                return tie !== '';
+            }
+
+            if (gameboard.getBoard().every(checkTie)) {
+                displayController.displayDraw();
+                break;
             }
         }
     }
@@ -88,15 +96,20 @@ const checkWinner = (function() {
 })();
 
 const displayController = (function() {
+    const displayEle = document.getElementById("turn");
     function displayTurn(name) {
-        document.getElementById("turn").innerHTML = name + "'s turn!";
+        displayEle.innerHTML = name + "'s turn!";
     }
 
     function displayWinner(name) {
-        document.getElementById("turn").innerHTML = name + " is the winner!";
+        displayEle.innerHTML = name + " is the winner!";
     }
 
-    return {displayTurn, displayWinner};
+    function displayDraw() {
+        displayEle.innerHTML = "It's a draw! Play again!"
+    }
+
+    return {displayTurn, displayWinner, displayDraw};
 })();
 
 //Handles input
