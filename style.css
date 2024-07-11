@@ -28,12 +28,13 @@
     display: grid;
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);
     gap: 25px;
+    background-color: #84DD63;
 }
 
 .container .gameboard .spot {
     width: 150px;
     height: 150px;
-    background-color: #84DD63;
+    background-color: #69747C;
     font-size: 150px;
     display: flex;
     align-items: center;
