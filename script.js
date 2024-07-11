@@ -1,11 +1,16 @@
+//Creates players
+function createPlayer(name, marker) {
+    return {name, marker};
+}
+
+const player1 = createPlayer("Player 1", "X");
+const player2 = createPlayer("Player 2", "O");
+
 //Gameboad Object
 const gameboard = (function() {
     //Creates gameboard array
-    let board = [];
+    const board = ['', '', '', '', '', '', '', '', ''];
 
-    for (let i=0; i<9; i++) {
-        board.push("");
-    }
     //Sets and Gets gameboard values
     const setBoard = (index, val) => (board[index] = val);
     const getBoard = () => board;
@@ -14,17 +19,9 @@ const gameboard = (function() {
     const getIndex = () => index;
     const increaseIndex = () => index++;
     const resetIndex = () => index = 0;
-    return {getIndex, increaseIndex, resetIndex, setBoard, getBoard};
+    return {board, getIndex, increaseIndex, resetIndex, setBoard, getBoard};
 
 })();
-function createGameboard() {
-    //Creates gameboard array
-    let board = [];
-
-    for (let i=0; i<9; i++) {
-        board.push("");
-    }
-}
 
 //Game Object
 const game = (function() {
@@ -33,11 +30,10 @@ const game = (function() {
     document.getElementById('dialog').showModal();
     document.querySelector('#form').addEventListener("submit", function(e) {
         e.preventDefault();
-        const playerOne = createPlayer(pOne.value, "X");
-        const playerTwo = createPlayer(pTwo.value, "O");
-        player.setPlayers(playerOne.name, playerTwo.name);
-        document.getElementById("players").innerHTML = playerOne.name + " VS " + playerTwo.name;
-        document.getElementById("turn").innerHTML = playerOne.name + "'s turn!"
+        player1.name = pOne.value;
+        player2.name = pTwo.value;
+        document.getElementById("players").innerHTML = player1.name + " VS " + player2.name;
+        document.getElementById("turn").innerHTML = player1.name + "'s turn!"
         pOne.value = "";
         pTwo.value = "";
         dialog.close();
@@ -48,23 +44,6 @@ const game = (function() {
     const increaseTick = () => tick++;
     const resetTick = () => tick = 0;
     return {getTick, increaseTick, resetTick};
-})();
-
-//Creates players
-function createPlayer(name, marker) {
-    return {name, marker};
-}
-
-const player = (function() {
-    let pOneName = "";
-    let pTwoName = "";
-    const setPlayers = (pOne, pTwo) => {
-        pOneName = pOne;
-        pTwoName = pTwo;
-    }
-    const getPOne = () => pOneName;
-    const getPTwo = () => pTwoName;
-    return {getPOne, getPTwo, setPlayers};
 })();
 
 const checkWinner = (function() {
@@ -100,6 +79,7 @@ const checkWinner = (function() {
             if (zero === one && one === two) {
                 winner = true;
                 displayController.displayWinner(winnerName);
+
                 break
             }
         }
@@ -129,21 +109,25 @@ document.querySelectorAll(".spot").forEach((spot) => {
         if (!checkWinner.getWinner()) {
             let temp = game.getTick();
             if (temp %= 2){
-                displayController.displayTurn(player.getPOne());
-                gameboard.setBoard(spot.getAttribute("id"), "O");
-                spot.innerHTML = "O";
+                displayController.displayTurn(player1.name);
+                gameboard.setBoard(spot.getAttribute("id"), player2.marker);
+                spot.innerHTML =player2.marker;
                 game.increaseTick();
-                checkWinner.setWinner(player.getPTwo());
+                checkWinner.setWinner(player2.name);
             }
             else {
-                displayController.displayTurn(player.getPTwo());
-                gameboard.setBoard(spot.getAttribute("id"), "X");
-                spot.innerHTML = "X";
+                displayController.displayTurn(player2.name);
+                gameboard.setBoard(spot.getAttribute("id"), player1.marker);
+                spot.innerHTML = player1.marker;
                 game.increaseTick();
-                checkWinner.setWinner(player.getPOne());
+                checkWinner.setWinner(player1.name);
             }
         }
 
         checkWinner.validateWinner();
     }
 })
+
+const reset = (function() {
+    
+})();
