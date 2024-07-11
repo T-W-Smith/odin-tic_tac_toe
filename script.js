@@ -14,13 +14,8 @@ const gameboard = (function() {
     //Sets and Gets gameboard values
     const setBoard = (index, val) => (board[index] = val);
     const getBoard = () => board;
-    //Indexing for gameboard spots
-    let index = 0;
-    const getIndex = () => index;
-    const increaseIndex = () => index++;
-    const resetIndex = () => index = 0;
-    return {getIndex, increaseIndex, resetIndex, setBoard, getBoard};
 
+    return {board, setBoard, getBoard};
 })();
 
 //Game Object
@@ -46,6 +41,7 @@ const game = (function() {
     return {getTick, increaseTick, resetTick};
 })();
 
+// Handles checking for a winner
 const checkWinner = (function() {
     const winningCondition = [
         [0, 1, 2],
@@ -95,6 +91,7 @@ const checkWinner = (function() {
     return {validateWinner, getWinner, setWinner};
 })();
 
+//Handles the display
 const displayController = (function() {
     const displayEle = document.getElementById("turn");
     function displayTurn(name) {
@@ -103,6 +100,8 @@ const displayController = (function() {
 
     function displayWinner(name) {
         displayEle.innerHTML = name + " is the winner!";
+        console.log(gameboard.getBoard());
+        reset();
     }
 
     function displayDraw() {
@@ -113,34 +112,42 @@ const displayController = (function() {
 })();
 
 //Handles input
-document.querySelectorAll(".spot").forEach((spot) => {
-    spot.addEventListener('click', clickSpot, {once:true});
-    spot.setAttribute("id", gameboard.getIndex());
-    gameboard.increaseIndex();
-
-    function clickSpot() {
-        if (!checkWinner.getWinner()) {
-            let temp = game.getTick();
-            if (temp %= 2){
-                displayController.displayTurn(player1.name);
-                gameboard.setBoard(spot.getAttribute("id"), player2.marker);
-                spot.innerHTML =player2.marker;
-                game.increaseTick();
-                checkWinner.setWinner(player2.name);
+const input = (function() {
+    let i = 0;
+    document.querySelectorAll(".spot").forEach((spot) => {
+        spot.addEventListener('click', clickSpot, {once:true});
+        spot.setAttribute("id", i);
+        i++;
+    
+        function clickSpot() {
+            if (!checkWinner.getWinner()) {
+                let temp = game.getTick();
+                if (temp %= 2){
+                    displayController.displayTurn(player1.name);
+                    gameboard.setBoard(spot.getAttribute("id"), player2.marker);
+                    spot.innerHTML = player2.marker;
+                    game.increaseTick();
+                    checkWinner.setWinner(player2.name);
+                }
+                else {
+                    displayController.displayTurn(player2.name);
+                    gameboard.setBoard(spot.getAttribute("id"), player1.marker);
+                    spot.innerHTML = player1.marker;
+                    game.increaseTick();
+                    checkWinner.setWinner(player1.name);
+                }
             }
-            else {
-                displayController.displayTurn(player2.name);
-                gameboard.setBoard(spot.getAttribute("id"), player1.marker);
-                spot.innerHTML = player1.marker;
-                game.increaseTick();
-                checkWinner.setWinner(player1.name);
-            }
+    
+            checkWinner.validateWinner();
         }
-
-        checkWinner.validateWinner();
-    }
-})
-
-const reset = (function() {
+    })
     
 })();
+
+// Handles resetting the game
+function reset() {
+    for (let i = 0; i < gameboard.getBoard().length; i++){
+        gameboard.setBoard(i, ''); 
+    }
+    console.log(gameboard.getBoard());
+}
