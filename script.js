@@ -17,6 +17,14 @@ const gameboard = (function() {
     return {getIndex, increaseIndex, resetIndex, setBoard, getBoard};
 
 })();
+function createGameboard() {
+    //Creates gameboard array
+    let board = [];
+
+    for (let i=0; i<9; i++) {
+        board.push("");
+    }
+}
 
 //Game Object
 const game = (function() {
@@ -91,12 +99,24 @@ const checkWinner = (function() {
 
             if (zero === one && one === two) {
                 winner = true;
-                document.getElementById("turn").innerHTML = winnerName + " is the Winner!";
+                displayController.displayWinner(winnerName);
                 break
             }
         }
     }
     return {validateWinner, getWinner, setWinner};
+})();
+
+const displayController = (function() {
+    function displayTurn(name) {
+        document.getElementById("turn").innerHTML = name + "'s turn!";
+    }
+
+    function displayWinner(name) {
+        document.getElementById("turn").innerHTML = name + " is the winner!";
+    }
+
+    return {displayTurn, displayWinner};
 })();
 
 //Handles input
@@ -109,14 +129,14 @@ document.querySelectorAll(".spot").forEach((spot) => {
         if (!checkWinner.getWinner()) {
             let temp = game.getTick();
             if (temp %= 2){
-                document.getElementById("turn").innerHTML = player.getPOne() + "'s turn!";
+                displayController.displayTurn(player.getPOne());
                 gameboard.setBoard(spot.getAttribute("id"), "O");
                 spot.innerHTML = "O";
                 game.increaseTick();
                 checkWinner.setWinner(player.getPTwo());
             }
             else {
-                document.getElementById("turn").innerHTML = player.getPTwo() + "'s turn!";
+                displayController.displayTurn(player.getPTwo());
                 gameboard.setBoard(spot.getAttribute("id"), "X");
                 spot.innerHTML = "X";
                 game.increaseTick();
