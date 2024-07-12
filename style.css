@@ -24,6 +24,15 @@
     font-size: 40pt;
 }
 
+.container .header #resetButton {
+    border: none;
+    border-radius: 10px;
+    width: 80px;
+    height: 30px;
+    font-size:large;
+    background-color: #84DD63;
+}
+
 .container .gameboard {
     display: grid;
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);

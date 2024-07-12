@@ -15,7 +15,7 @@ const gameboard = (function() {
     const setBoard = (index, val) => (board[index] = val);
     const getBoard = () => board;
 
-    return {board, setBoard, getBoard};
+    return {setBoard, getBoard};
 })();
 
 //Game Object
@@ -49,10 +49,11 @@ const checkWinner = (function() {
     ];
 
     let winner = false;
-    const getWinner = () => winner;
+    const checkWinner = () => winner;
+    const resetWinner = () => winner = false;
 
     let winnerName = "";
-    const setWinner = (w) => {
+    const setWinnerName = (w) => {
         winnerName = w;
     }
     
@@ -69,7 +70,6 @@ const checkWinner = (function() {
             if (zero === one && one === two) {
                 winner = true;
                 displayController.displayWinner(winnerName);
-                winner = false;
                 break;
             }
 
@@ -83,7 +83,7 @@ const checkWinner = (function() {
             }
         }
     }
-    return {validateWinner, getWinner, setWinner};
+    return {validateWinner, checkWinner, resetWinner, setWinnerName};
 })();
 
 //Handles the display
@@ -95,7 +95,6 @@ const displayController = (function() {
 
     function displayWinner(name) {
         displayEle.innerHTML = name + " is the winner!";
-        reset();
     }
 
     function displayDraw() {
@@ -110,20 +109,20 @@ const input = (function() {
     let i = 0;
     let tick = 0;
     function clickSpot(e) {
-        if (!checkWinner.getWinner()) {
+        if (!checkWinner.checkWinner()) {
             if (tick %= 2){
                 displayController.displayTurn(player1.name);
                 gameboard.setBoard(e.target.getAttribute("id"), player2.marker);
                 e.target.innerHTML = player2.marker;
                 tick++;
-                checkWinner.setWinner(player2.name);
+                checkWinner.setWinnerName(player2.name);
             }
             else {
                 displayController.displayTurn(player2.name);
                 gameboard.setBoard(e.target.getAttribute("id"), player1.marker);
                 e.target.innerHTML = player1.marker;
                 tick++;
-                checkWinner.setWinner(player1.name);
+                checkWinner.setWinnerName(player1.name);
             }
         }
         checkWinner.validateWinner();
@@ -136,16 +135,19 @@ const input = (function() {
             i++;
         })
     }
-    function removeClickSpot() {
+    function resetClickSpot() {
         document.querySelectorAll(".spot").forEach((spot) => {
             spot.removeEventListener('click', clickSpot);
             spot.setAttribute("id", '');
+            gameboard.setBoard(spot.getAttribute("id"), '');
+            spot.innerHTML = '';
             i = 0;
             tick = 0;
         })
     }
     addClickSpot();
-    return{addClickSpot, removeClickSpot};
+    document.getElementById('resetButton').addEventListener('click', reset);
+    return{addClickSpot, resetClickSpot};
 })();
 
 // Handles resetting the game
@@ -153,10 +155,8 @@ function reset() {
     for (let i = 0; i < gameboard.getBoard().length; i++){
         gameboard.setBoard(i, ''); 
     }
-    document.querySelectorAll(".spot").forEach((spot) => {
-        gameboard.setBoard(spot.getAttribute("id"), '');
-        spot.innerHTML = '';
-    })
-    input.removeClickSpot();
+    displayController.displayTurn(player1.name);
+    checkWinner.resetWinner();
+    input.resetClickSpot();
     input.addClickSpot();
 }
