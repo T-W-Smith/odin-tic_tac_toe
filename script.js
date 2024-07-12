@@ -33,12 +33,6 @@ const game = (function() {
         pTwo.value = "";
         dialog.close();
     })
-    //Handles player turns
-    let tick = 0;
-    const getTick = () => tick;
-    const increaseTick = () => tick++;
-    const resetTick = () => tick = 0;
-    return {getTick, increaseTick, resetTick};
 })();
 
 // Handles checking for a winner
@@ -75,6 +69,7 @@ const checkWinner = (function() {
             if (zero === one && one === two) {
                 winner = true;
                 displayController.displayWinner(winnerName);
+                winner = false;
                 break;
             }
 
@@ -100,7 +95,6 @@ const displayController = (function() {
 
     function displayWinner(name) {
         displayEle.innerHTML = name + " is the winner!";
-        console.log(gameboard.getBoard());
         reset();
     }
 
@@ -114,34 +108,44 @@ const displayController = (function() {
 //Handles input
 const input = (function() {
     let i = 0;
-    document.querySelectorAll(".spot").forEach((spot) => {
-        spot.addEventListener('click', clickSpot, {once:true});
-        spot.setAttribute("id", i);
-        i++;
-    
-        function clickSpot() {
-            if (!checkWinner.getWinner()) {
-                let temp = game.getTick();
-                if (temp %= 2){
-                    displayController.displayTurn(player1.name);
-                    gameboard.setBoard(spot.getAttribute("id"), player2.marker);
-                    spot.innerHTML = player2.marker;
-                    game.increaseTick();
-                    checkWinner.setWinner(player2.name);
-                }
-                else {
-                    displayController.displayTurn(player2.name);
-                    gameboard.setBoard(spot.getAttribute("id"), player1.marker);
-                    spot.innerHTML = player1.marker;
-                    game.increaseTick();
-                    checkWinner.setWinner(player1.name);
-                }
+    let tick = 0;
+    function clickSpot(e) {
+        if (!checkWinner.getWinner()) {
+            if (tick %= 2){
+                displayController.displayTurn(player1.name);
+                gameboard.setBoard(e.target.getAttribute("id"), player2.marker);
+                e.target.innerHTML = player2.marker;
+                tick++;
+                checkWinner.setWinner(player2.name);
             }
-    
-            checkWinner.validateWinner();
+            else {
+                displayController.displayTurn(player2.name);
+                gameboard.setBoard(e.target.getAttribute("id"), player1.marker);
+                e.target.innerHTML = player1.marker;
+                tick++;
+                checkWinner.setWinner(player1.name);
+            }
         }
-    })
-    
+        checkWinner.validateWinner();
+    }
+
+    function addClickSpot() {
+        document.querySelectorAll(".spot").forEach((spot) => {
+            spot.addEventListener('click', clickSpot, {once:true});
+            spot.setAttribute("id", i);
+            i++;
+        })
+    }
+    function removeClickSpot() {
+        document.querySelectorAll(".spot").forEach((spot) => {
+            spot.removeEventListener('click', clickSpot);
+            spot.setAttribute("id", '');
+            i = 0;
+            tick = 0;
+        })
+    }
+    addClickSpot();
+    return{addClickSpot, removeClickSpot};
 })();
 
 // Handles resetting the game
@@ -149,5 +153,10 @@ function reset() {
     for (let i = 0; i < gameboard.getBoard().length; i++){
         gameboard.setBoard(i, ''); 
     }
-    console.log(gameboard.getBoard());
+    document.querySelectorAll(".spot").forEach((spot) => {
+        gameboard.setBoard(spot.getAttribute("id"), '');
+        spot.innerHTML = '';
+    })
+    input.removeClickSpot();
+    input.addClickSpot();
 }
