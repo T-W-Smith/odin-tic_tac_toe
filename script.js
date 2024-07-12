@@ -3,6 +3,7 @@ function createPlayer(name, marker) {
     return {name, marker};
 }
 
+// Players
 const player1 = createPlayer("Player 1", "X");
 const player2 = createPlayer("Player 2", "O");
 
@@ -18,7 +19,7 @@ const gameboard = (function() {
     return {setBoard, getBoard};
 })();
 
-//Game Object
+//Game Object handles the start of the game
 const game = (function() {
     let pOne = document.getElementById("playerOne");
     let pTwo = document.getElementById("playerTwo");
@@ -35,8 +36,9 @@ const game = (function() {
     })
 })();
 
-// Handles checking for a winner
+// Winner check handles checking for a winner
 const checkWinner = (function() {
+    // Winning conditions
     const winningCondition = [
         [0, 1, 2],
         [3, 4, 5],
@@ -56,9 +58,11 @@ const checkWinner = (function() {
     const setWinnerName = (w) => {
         winnerName = w;
     }
-    
+    // Validates if there is a winner or if there is a draw
     function validateWinner() {
         for (let i = 0; i <= 7; i++) {
+            // Compares the winning condtions with the gameboard
+            // to see if there is a winner
             const condition = winningCondition[i];
             let zero = gameboard.getBoard()[condition[0]];
             let one = gameboard.getBoard()[condition[1]];
@@ -66,18 +70,17 @@ const checkWinner = (function() {
             if (zero === '' || one === '' || two === '') {
                 continue;
             }
-
             if (zero === one && one === two) {
                 winner = true;
                 displayController.displayWinner(winnerName);
                 break;
             }
 
-            function checkTie(tie) {
-                return tie !== '';
+            // Checks for a draw
+            function checkDraw(draw) {
+                return draw !== '';
             }
-
-            if (gameboard.getBoard().every(checkTie)) {
+            if (gameboard.getBoard().every(checkDraw)) {
                 displayController.displayDraw();
                 break;
             }
@@ -89,14 +92,15 @@ const checkWinner = (function() {
 //Handles the display
 const displayController = (function() {
     const displayEle = document.getElementById("turn");
+    // Displays whos turn it is
     function displayTurn(name) {
         displayEle.innerHTML = name + "'s turn!";
     }
-
+    // Displays the winner
     function displayWinner(name) {
         displayEle.innerHTML = name + " is the winner!";
     }
-
+    // Displays if there is a draw
     function displayDraw() {
         displayEle.innerHTML = "It's a draw! Play again!"
     }
@@ -104,10 +108,13 @@ const displayController = (function() {
     return {displayTurn, displayWinner, displayDraw};
 })();
 
-//Handles input
+//Handles input for the game
 const input = (function() {
+    // i sets each spot's value corrisponding to the gameboard array
     let i = 0;
+    // tick handles each players turn
     let tick = 0;
+    // Controls turns, input on the board, and checks for a winner
     function clickSpot(e) {
         if (!checkWinner.checkWinner()) {
             if (tick %= 2){
@@ -125,9 +132,11 @@ const input = (function() {
                 checkWinner.setWinnerName(player1.name);
             }
         }
+        // Checks if there is a winner
         checkWinner.validateWinner();
     }
 
+    // Adds an event listener to allow gameboard input
     function addClickSpot() {
         document.querySelectorAll(".spot").forEach((spot) => {
             spot.addEventListener('click', clickSpot, {once:true});
@@ -135,6 +144,7 @@ const input = (function() {
             i++;
         })
     }
+    // Resets the gameboard input
     function resetClickSpot() {
         document.querySelectorAll(".spot").forEach((spot) => {
             spot.removeEventListener('click', clickSpot);
